@@ -1,39 +1,27 @@
+// Entrypoint for API
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-	"encoding/json"
+ 	"log"
+ 	"net/http"
+ 	"os"
+	"github.com/gorilla/handlers"
+	"app/appointments"
 )
 
-type Article struct {
-	Title string `json:"Title"`
-	Desc string `json:"desc"`
-	Content string `json:"content"`
-}
+func main() {
+	port := os.Getenv("PORT")
 
-type Articles []Article 
-
-func allArticles(w http.ResponseWriter, r *http.Request)  {
-	articles := Articles {
-		Article{ Title: "Test Title", Desc: "Test Description", Content: "Hello, World" },
+	if port == "" {
+		log.Fatal("$PORT must be set")
 	}
 
-	fmt.Println("End Point Hit: All articles end point")
-	json.NewEncoder(w).Encode(articles)
-}
+	router := appointments.NewRouter() // create routes
 
-func homePage(w http.ResponseWriter, r *http.Request)  {
-	fmt.Fprintf(w, "Homepage End point Hit")
-}
+	// These two lines are important in order to allow access from the front-end side to the methods
+	allowedOrigins := handlers.AllowedOrigins([]string{"*"}) 
+ 	allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT"})
 
-func handleRequests()  {
-	http.HandleFunc("/", homePage)
-	http.HandleFunc("/articles", allArticles)
-	log.Fatal(http.ListenAndServe("0.0.0.0:3001", nil))
-}
-
-func main() {
-	handleRequests()
+	// Launch server with CORS validations
+ 	log.Fatal(http.ListenAndServe("0.0.0.0:" + port, handlers.CORS(allowedOrigins, allowedMethods)(router)))
 }

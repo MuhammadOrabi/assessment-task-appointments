@@ -7,7 +7,10 @@ services:
       - .:/go/src/app
     ports:
       - "3001:3001"
-    environment: 
+    depends_on:
+      - mongodb
+    environment:
+      - PORT=3001 
       - SECRET=NPH2xmMIKI78gsIZ/BPCCpy6u6MnLbFhT4Oj1S/zky0=
       - DATABASE_URL=mongodb://mongodb:27017/appointments
   mongodb:
