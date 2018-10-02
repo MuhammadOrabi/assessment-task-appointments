@@ -82,7 +82,7 @@ func (r Repository) GetAppointmentsByString(query string) Appointments {
 	qs := strings.Split(query, " ")
 	and := make([]bson.M, len(qs))
 	for i, q := range qs {
-    	and[i] = bson.M{"title": bson.M{
+    	and[i] = bson.M{"DoctorId": bson.M{
         	"$regex": bson.RegEx{Pattern: ".*" + q + ".*", Options: "i"},
     	}}
 	}

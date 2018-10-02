@@ -62,7 +62,7 @@ var routes = Routes {
     Route {
         "SearchAppointment",
         "GET",
-        "/Search/{query}",
+        "/search/{query}",
         controller.SearchAppointment,
     },
 }
