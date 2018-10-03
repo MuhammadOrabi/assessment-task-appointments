@@ -117,8 +117,9 @@ func (c *Controller) AddAppointment(w http.ResponseWriter, r *http.Request) {
         w.WriteHeader(http.StatusInternalServerError)
         return
     }
-
+    
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.Header().Set("Access-Control-Allow-Origin", "*")
     w.WriteHeader(http.StatusCreated)
     return
 }
@@ -131,7 +132,26 @@ func (c *Controller) SearchAppointment(w http.ResponseWriter, r *http.Request) {
     query := vars["query"] // param query
     log.Println("Search Query - " + query);
 
-    appointments := c.Repository.GetAppointmentsByString(query)
+    appointments := c.Repository.GetAppointmentsByString(query, "doctor_id")
+    data, _ := json.Marshal(appointments)
+
+    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.WriteHeader(http.StatusOK)
+    w.Write(data)
+    return
+}
+
+
+// SearchAppointmentByPatient GET /
+func (c *Controller) SearchAppointmentByPatient(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    log.Println(vars)
+
+    query := vars["query"] // param query
+    log.Println("Search Query - " + query);
+
+    appointments := c.Repository.GetAppointmentsByString(query, "patient_id")
     data, _ := json.Marshal(appointments)
 
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")

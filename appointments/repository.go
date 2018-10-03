@@ -5,7 +5,7 @@ import (
 	"log"
 	"github.com/night-codes/mgo-ai"
 	"gopkg.in/mgo.v2"
-	"strings"
+	// "strings"
 	"gopkg.in/mgo.v2/bson"
 	"os"
 )
@@ -66,7 +66,7 @@ func (r Repository) GetAppointmentById(id int) Appointment {
 }
 
 // GetAppointmentsByString takes a search string as input and returns Appointments
-func (r Repository) GetAppointmentsByString(query string) Appointments {
+func (r Repository) GetAppointmentsByString(query string, field string) Appointments {
 	session, err := mgo.Dial(SERVER)
 
 	if err != nil {
@@ -79,18 +79,25 @@ func (r Repository) GetAppointmentsByString(query string) Appointments {
 	result := Appointments{}
 
 	// Logic to create filter
-	qs := strings.Split(query, " ")
-	and := make([]bson.M, len(qs))
-	for i, q := range qs {
-    	and[i] = bson.M{"DoctorId": bson.M{
-        	"$regex": bson.RegEx{Pattern: ".*" + q + ".*", Options: "i"},
-    	}}
+	// qs := strings.Split(query, " ")
+	// and := make([]bson.M, len(qs))
+	// for i, q := range qs {
+    // 	and[i] = bson.M{"DoctorId": bson.M{
+    //     	"$regex": bson.RegEx{Pattern: ".*" + q + ".*", Options: "i"},
+    // 	}}
+	// }
+	// filter := bson.M{"$and": and}
+	// fmt.Println("Query", query);
+	if field == "doctor_id" {
+		if err := c.Find(bson.M{"doctor_id": query}).All(&result); err != nil {
+			  fmt.Println("Failed to write result:", err)
+		}
+	} else if field == "patient_id" {
+		if err := c.Find(bson.M{"patient_id": query}).All(&result); err != nil {
+			fmt.Println("Failed to write result:", err)
+	  	}
 	}
-	filter := bson.M{"$and": and}
 
-	if err := c.Find(&filter).Limit(5).All(&result); err != nil {
-	  	fmt.Println("Failed to write result:", err)
-	}
 
 	return result
 }

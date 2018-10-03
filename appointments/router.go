@@ -65,6 +65,12 @@ var routes = Routes {
         "/search/{query}",
         controller.SearchAppointment,
     },
+    Route {
+        "SearchAppointmentByPatient",
+        "GET",
+        "/search/patient/{query}",
+        controller.SearchAppointmentByPatient,
+    },
 }
 
 // NewRouter configures a new router to the API
